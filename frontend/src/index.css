@@ -1,0 +1,12 @@
+@layer theme, base, components, utilities;
+/* 색. 크기등 디자인 값 */
+@import "tailwindcss/theme.css" layer(theme);
+/* 구성 여백 */
+@import "tailwindcss/utilities.css" layer(utilities);
+
+body {
+  margin: 0;
+  font-family: "Malgun Gothic", sans-serif;
+  background: #f5f7fa;
+  color: #222;
+}

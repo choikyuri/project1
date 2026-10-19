@@ -1,0 +1,30 @@
+@host = localhost:8080
+
+### 0. 로그아웃 (이전 로그인 정리, 기대 : 204)
+POST http://{{host}}/api/members/logout
+
+
+### 1. 비회원 · 실제 날씨 (기대 : 200, notes 에 "로그인하면 내 취향도 반영돼요.")
+GET http://{{host}}/api/recommendations
+
+
+### 2. 비회원 · 비 가정 (기대 : 200, simulated true, 1위 CAFE 또는 CULTURE)
+GET http://{{host}}/api/recommendations?weather=RAIN
+
+
+### 3. 비회원 · 맑음 가정 (기대 : 200, 1위 TRAVEL 또는 SPORTS)
+GET http://{{host}}/api/recommendations?weather=CLEAR
+
+
+### 4. 없는 날씨 (기대 : 400)
+GET http://{{host}}/api/recommendations?weather=STORM
+
+
+### 5. gyul01 로그인 (기대 : 200)
+POST http://{{host}}/api/members/login
+Content-Type: application/json
+
+{
+  "username": "gyul01",
+  "password": "gyul1234"
+}

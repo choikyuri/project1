@@ -1,0 +1,26 @@
+@host = localhost:8080
+
+### 1. Q1 날씨별 (기대 : 200, RAIN 의 topCategory 가 CAFE)
+GET http://{{host}}/api/analysis/weather
+
+
+### 2. Q2 기온 구간별 (기대 : 200, COLD 에서 FOOD 비율이 다른 구간보다 높음)
+GET http://{{host}}/api/analysis/temperature
+
+
+### 3. Q3 로그인 전 (기대 : 401)
+GET http://{{host}}/api/analysis/me
+
+
+### 4. 로그인 (기대 : 200)
+POST http://{{host}}/api/members/login
+Content-Type: application/json
+
+{
+  "username": "gyul01",
+  "password": "gyul1234"
+}
+
+
+### 5. Q3 로그인 후 (기대 : 200, topCategory 가 FOOD)
+GET http://{{host}}/api/analysis/me

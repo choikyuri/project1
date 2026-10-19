@@ -1,0 +1,197 @@
+/* =========================================================
+   Chapter 10. 챗봇 위젯 스타일
+   main.jsx 에서 import "./chat.css"; 로 불러온다
+   position: fixed → 스크롤해도 화면의 같은 자리에 붙어 있다
+   ========================================================= */
+
+/* 오른쪽 아래 동그란 버튼 */
+.chat-fab {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 1000; /* 다른 화면 요소보다 위에 */
+  width: 64px;
+  height: 64px;
+  border: 0;
+  border-radius: 50%;
+  background: #e87a00;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(232, 122, 0, 0.35);
+}
+.chat-fab:hover {
+  background: #cf6c00;
+}
+
+/* 대화창 */
+.chat-panel {
+  position: fixed;
+  right: 24px;
+  bottom: 100px; /* 버튼 위에 */
+  z-index: 1000;
+  width: 360px;
+  height: 520px;
+  max-height: calc(100vh - 140px); /* 화면이 낮아도 넘치지 않게 */
+  display: flex;
+  flex-direction: column; /* 머리 / 대화 / 입력 을 세로로 */
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+}
+
+/* 휴대폰처럼 좁은 화면 : 좌우 꽉 채움 */
+@media (max-width: 480px) {
+  .chat-panel {
+    right: 12px;
+    left: 12px;
+    width: auto;
+  }
+  .chat-fab {
+    right: 12px;
+    bottom: 12px;
+  }
+}
+
+/* 머리 */
+.chat-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  background: #fff7ee;
+  border-bottom: 1px solid #f3e2cf;
+}
+.chat-head b {
+  color: #e87a00;
+  margin-right: 6px;
+}
+.chat-sub {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+.chat-head-btns {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.chat-icon-btn {
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+/* 대화 목록 : 남는 높이를 모두 차지하고, 넘치면 이 안에서만 스크롤 */
+.chat-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #fafafa;
+}
+
+/* 말풍선 */
+.chat-bubble {
+  max-width: 82%;
+  padding: 9px 12px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  white-space: pre-wrap; /* 챗봇 답변의 줄바꿈을 그대로 */
+  word-break: break-word;
+}
+.chat-bubble.bot {
+  align-self: flex-start; /* 왼쪽 */
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-bottom-left-radius: 4px;
+}
+.chat-bubble.me {
+  align-self: flex-end; /* 오른쪽 */
+  background: #e87a00;
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+.chat-typing {
+  color: #6b7280;
+}
+
+/* 첫 인사 + 추천 질문 */
+.chat-welcome {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.chat-suggest {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.chat-suggest button {
+  border: 1px solid #f0c896;
+  background: #fff;
+  color: #a85600;
+  border-radius: 999px;
+  padding: 5px 11px;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+.chat-suggest button:hover {
+  background: #fff3e6;
+}
+
+/* 로그인 안내 */
+.chat-guest {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #4b5563;
+}
+
+/* 오류 문구 */
+.chat-error {
+  margin: 0;
+  padding: 8px 14px;
+  font-size: 0.8rem;
+  color: #b91c1c;
+  background: #fef2f2;
+}
+
+/* 입력창 */
+.chat-form {
+  display: flex;
+  gap: 6px;
+  padding: 10px;
+  border-top: 1px solid #e5e7eb;
+  background: #fff;
+}
+.chat-form input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 9px 10px;
+  font-size: 0.9rem;
+}
+.chat-form button {
+  border: 0;
+  border-radius: 8px;
+  padding: 0 14px;
+  background: #e87a00;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+.chat-form button:disabled {
+  background: #f0c896;
+  cursor: default;
+}

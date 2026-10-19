@@ -1,0 +1,48 @@
+//gyul01 / gyul1234 로 가입한 회원
+
+@host = localhost:8080
+
+### 1. 로그인 전 내 정보 (기대 결과 : 401, "로그인이 필요합니다.")
+GET http://{{host}}/api/members/me
+
+
+### 2. 로그인 실패 - 비밀번호 틀림 (기대 결과 : 401, "아이디 또는 비밀번호가 올바르지 않습니다.")
+POST http://{{host}}/api/members/login
+Content-Type: application/json
+
+{
+  "username": "gyul01",
+  "password": "wrong1234"
+}
+
+
+### 3. 로그인 실패 - 빈 값 (기대 결과 : 400, errors 에 username, password 문구)
+POST http://{{host}}/api/members/login
+Content-Type: application/json
+
+{
+  "username": "",
+  "password": ""
+}
+
+
+### 4. 로그인 성공 (기대 결과 : 200, 응답 헤더에 Set-Cookie: JSESSIONID=...)
+POST http://{{host}}/api/members/login
+Content-Type: application/json
+
+{
+  "username": "gyul01",
+  "password": "gyul1234"
+}
+
+
+### 5. 로그인 후 내 정보 (기대 결과 : 200, 회원 정보)
+GET http://{{host}}/api/members/me
+
+
+### 6. 로그아웃 (기대 결과 : 204 No Content)
+POST http://{{host}}/api/members/logout
+
+
+### 7. 로그아웃 후 내 정보 (기대 결과 : 401)
+GET http://{{host}}/api/members/me

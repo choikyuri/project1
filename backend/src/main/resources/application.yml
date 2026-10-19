@@ -1,0 +1,34 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: backend
+
+  # [Chapter 06] secret.yml 이 있으면 함께 읽는다
+  # optional: → 파일이 없어도 서버는 켜진다 (그 경우 날씨는 "정보 없음")
+  config:
+    import: optional:classpath:secret.yml
+
+  datasource:
+    # 23ai Free 사용자는 XE → FREE 로 변경
+    url: jdbc:oracle:thin:@localhost:1521/XE
+    username: project1
+    password: project1
+    driver-class-name: oracle.jdbc.OracleDriver
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+# [Chapter 06] 날씨 설정 (키는 secret.yml 에)
+weather:
+  city-name: 서울      # 화면에 보여줄 도시 이름
+  lat: 37.5665         # 위도 (서울 시청)
+  lon: 126.9780        # 경도
+  api-key: # 비워 둠 → 실제 키는 secret.yml 에 작성

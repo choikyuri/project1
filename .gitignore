@@ -1,0 +1,35 @@
+# ===== 비밀 정보 (API 키, DB 비밀번호) =====
+.env
+.env.*
+application-secret.properties
+application-secret.yml
+secret.yml
+
+# ===== frontend (React) =====
+node_modules/
+dist/
+build/
+
+# ===== backend (Spring Boot) =====
+target/
+bin/
+.gradle/
+*.class
+HELP.md
+
+# ===== analysis (Python) =====
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+venv/
+.venv/
+
+# ===== 편집기·운영체제 =====
+.idea/
+.DS_Store
+Thumbs.db
+
+# ===== 로그 =====
+*.log
+.ven/
+!.env.example

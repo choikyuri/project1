@@ -1,0 +1,90 @@
+@host = localhost:8080
+
+### 1. 목록 기본값 (기대 : 200, page 0, size 10, 최신 글 먼저)
+GET http://{{host}}/api/boards
+
+
+### 2. 2쪽, 5개씩 (기대 : 200, page 1, boards 5개)
+GET http://{{host}}/api/boards?page=1&size=5
+
+
+### 3. 카테고리 CAFE (기대 : 200, 모두 "category": "CAFE")
+GET http://{{host}}/api/boards?category=CAFE
+
+
+### 4. 검색어 "운동" (기대 : 200, 제목이나 내용에 "운동" 포함)
+GET http://{{host}}/api/boards?keyword=운동
+
+
+### 5. 카테고리 + 검색어 (기대 : 200, 여행 글 중 "1" 이 들어간 글)
+GET http://{{host}}/api/boards?category=TRAVEL&keyword=1
+
+
+### 6. 없는 카테고리 (기대 : 400, errors.category)
+GET http://{{host}}/api/boards?category=CAFEE
+
+
+### 7. size 를 아주 크게 (기대 : 200, size 50 으로 제한됨)
+GET http://{{host}}/api/boards?size=100000
+
+
+### 8. 1번 글 상세 - 조회수 확인 (기대 : 200, viewCount 기억해 두기)
+GET http://{{host}}/api/boards/1
+
+
+### 9. 1번 글 조회수 올리기 - 비회원 (기대 : 204)
+POST http://{{host}}/api/boards/1/views
+
+
+### 10. 다시 상세 (기대 : 200, viewCount 가 8번보다 1 증가)
+GET http://{{host}}/api/boards/1
+
+
+### 11. 없는 글 조회수 올리기 (기대 : 404)
+POST http://{{host}}/api/boards/99999/views
+
+
+### 12. 로그인 (기대 : 200)
+POST http://{{host}}/api/members/login
+Content-Type: application/json
+
+{
+  "username": "gyul01",
+  "password": "gyul1234"
+}
+
+
+### 13. 로그인 상태로 조회수 올리기 (기대 : 204, VIEW_LOG 에 MEMBER_ID 가 기록됨)
+POST http://{{host}}/api/boards/1/views
+
+
+### 14. 카테고리 포함 글쓰기 (기대 : 201, "category": "CAFE", "categoryLabel": "카페", "viewCount": 0)
+POST http://{{host}}/api/boards
+Content-Type: application/json
+
+{
+  "category": "CAFE",
+  "title": "비 오는 날 가기 좋은 카페",
+  "content": "창가 자리가 좋아요."
+}
+
+
+### 15. 카테고리 없이 글쓰기 (기대 : 400, errors.category "카테고리를 선택하세요.")
+POST http://{{host}}/api/boards
+Content-Type: application/json
+
+{
+  "title": "카테고리 없음",
+  "content": "막혀야 정상"
+}
+
+
+### 16. 없는 카테고리로 글쓰기 (기대 : 400, "요청 내용을 읽을 수 없습니다...")
+POST http://{{host}}/api/boards
+Content-Type: application/json
+
+{
+  "category": "CAFEE",
+  "title": "잘못된 카테고리",
+  "content": "막혀야 정상"
+}

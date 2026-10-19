@@ -1,0 +1,50 @@
+# 변수 : 아래 요청들의 {{host}} 자리에 이 값이 들어간다
+@host = localhost:8080
+
+### 1. 아이디 중복 확인 - 사용 가능한 아이디 (기대 결과 : 200, available true)
+GET http://{{host}}/api/members/check-username?username=gyul01
+
+
+### 2. 아이디 중복 확인 - 형식 오류 (기대 결과 : 200, available false)
+GET http://{{host}}/api/members/check-username?username=AB
+
+
+### 3. 회원가입 - 성공 (기대 결과 : 201 Created , 409 Conflict)
+# 주의 : Content-Type 줄 다음에 반드시 빈 줄 1개, 그다음 JSON
+POST http://{{host}}/api/members/signup
+Content-Type: application/json
+
+{
+  "username": "gyul01",
+  "password": "gyul1234",
+  "name": "귤쌤",
+  "email": "gyul01@test.com"
+}
+
+
+### 4. 회원가입 - 같은 아이디로 다시 (기대 결과 : 409 Conflict)
+POST http://{{host}}/api/members/signup
+Content-Type: application/json
+
+{
+  "username": "gyul01",
+  "password": "gyul1234",
+  "name": "귤쌤",
+  "email": "other@test.com"
+}
+
+
+### 5. 회원가입 - 입력값 규칙 위반 (기대 결과 : 400 Bad Request)
+POST http://{{host}}/api/members/signup
+Content-Type: application/json
+
+{
+  "username": "AB",
+  "password": "1234",
+  "name": "",
+  "email": "not-email"
+}
+
+
+### 6. 아이디 중복 확인 - 이미 가입한 아이디 (기대 결과 : 200, available false)
+GET http://{{host}}/api/members/check-username?username=gyul01

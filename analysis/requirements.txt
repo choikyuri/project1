@@ -1,0 +1,6 @@
+fastapi
+uvicorn[standard]
+pandas
+oracledb
+openai
+python-dotenv

@@ -1,0 +1,8 @@
+@host = localhost:8080
+
+### 1. 지금 날씨 - 첫 요청 (기대 : 200, 콘솔에 "[날씨] OpenWeather 호출")
+GET http://{{host}}/api/weather
+
+
+### 2. 지금 날씨 - 바로 다시 (기대 : 200, 같은 fetchedAt, 콘솔에 "[날씨] 캐시 사용")
+GET http://{{host}}/api/weather

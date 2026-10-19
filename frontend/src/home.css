@@ -1,0 +1,175 @@
+.home {
+  display: grid;
+  gap: 20px;
+}
+
+/* 제목 + 날씨 버튼 : 넓으면 가로, 좁으면 세로로 쌓인다 */
+.home-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+.home-head h1 {
+  margin: 0 0 4px;
+}
+.weather-switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* 왼쪽 추천(넓게) + 오른쪽 히트맵·취향 → 900px 미만이면 한 줄 */
+.home-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+.home-side {
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+}
+@media (max-width: 900px) {
+  .home-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* 흰 상자 */
+.dash-panel {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 20px;
+  min-width: 0;
+}
+.dash-panel h2 {
+  font-size: 1.05rem;
+  margin: 0 0 4px;
+}
+.dash-head {
+  margin-bottom: 16px;
+}
+
+/* ---------- 추천 Top 3 ---------- */
+.rec-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 18px;
+}
+.rec-top {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.rec-rank {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #e87a00;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.8rem;
+  display: grid;
+  place-items: center;
+}
+.rec-share {
+  font-variant-numeric: tabular-nums;
+}
+.rec-lift {
+  font-size: 0.78rem;
+  color: #a85600;
+  background: #fff3e6;
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+
+/* 막대 : 회색 바탕(track) 위에 주황 채움(fill) */
+.bar-track {
+  position: relative;
+  height: 10px;
+  background: #f1f2f4;
+  border-radius: 5px;
+}
+.bar-fill {
+  height: 100%;
+  background: #e87a00;
+  border-radius: 5px;
+}
+/* 평소 비율 위치 눈금 */
+.bar-mark {
+  position: absolute;
+  top: -3px;
+  width: 2px;
+  height: 16px;
+  background: #4b5563;
+}
+.rec-caption {
+  font-size: 0.78rem;
+  color: #6b7280;
+  margin: 4px 0 0;
+}
+.rec-posts {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 2px;
+  font-size: 0.9rem;
+}
+
+/* ---------- 히트맵 ---------- */
+.table-scroll {
+  overflow-x: auto;
+}
+.heatmap {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 3px;
+  table-layout: fixed; /* 칸 너비를 글자 길이와 상관없이 똑같이 */
+  min-width: 420px; /* 이보다 좁으면 table-scroll 안에서 가로 스크롤 */
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+.heatmap thead th:first-child {
+  width: 26%; /* 날씨 이름 + 건수 칸만 넓게 */
+}
+.heatmap thead th {
+  text-align: center;
+}
+.heatmap thead th:first-child,
+.heatmap tbody th {
+  text-align: left;
+}
+.heatmap th {
+  font-weight: 600;
+  white-space: nowrap;
+  padding: 4px 6px;
+}
+.heatmap td {
+  text-align: center;
+  padding: 8px 4px;
+  border-radius: 4px;
+  /* --heat (0~1) 이 클수록 진한 주황 : rgba 의 마지막 값이 투명도 */
+  background: rgba(232, 122, 0, calc(0.08 + var(--heat) * 0.82));
+  color: #1f2937;
+}
+/* 진한 칸은 글자를 흰색으로 */
+.heatmap td.is-max {
+  color: #fff;
+  font-weight: 700;
+}
+/* 지금 보고 있는 날씨 행 강조 */
+.heatmap tr.is-selected th {
+  color: #e87a00;
+}
+.heatmap tr.is-selected td {
+  outline: 2px solid #e87a00;
+  outline-offset: -2px;
+}
