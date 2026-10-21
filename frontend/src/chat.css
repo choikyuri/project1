@@ -195,3 +195,30 @@
   background: #f0c896;
   cursor: default;
 }
+
+/* =========================================================
+   [Chapter 11] 귤봇 음식 사진
+   ========================================================= */
+
+/* 말풍선 안의 사진 */
+.chat-img {
+  display: block;
+  width: 100%;
+  max-width: 220px;
+  margin-top: 8px;
+  border-radius: 10px;
+}
+
+/* [🍊 사진] 버튼 : [보내기] 와 구분되도록 흰 바탕 + 주황 테두리
+   (.chat-form button 규칙보다 뒤에 있어야 덮어쓴다) */
+.chat-form .chat-img-btn {
+  background: #fff;
+  color: #e87a00;
+  border: 1px solid #f0c896;
+  padding: 0 10px;
+  white-space: nowrap;
+}
+.chat-form .chat-img-btn:disabled {
+  background: #fff;
+  opacity: 0.5;
+}

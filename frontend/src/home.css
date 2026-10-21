@@ -1,175 +1,498 @@
+/* =========================================================
+   Chapter 09. 홈 분석 대시보드 스타일 (넓고 크게 다시 정리한 버전)
+   main.jsx 에서 import "./home.css"; 로 불러온다
+
+   화면 구성 (위 → 아래)
+   ① 히어로   : 인사말 + 지금 날씨(크게) + 날씨 버튼
+   ② 추천     : Top 3 를 큰 카드 3장으로 (넓으면 가로 3칸, 좁으면 세로)
+   ③ 분석     : 히트맵 + 내 취향 (넓으면 나란히, 좁으면 위아래)
+
+   색은 맨 위 변수(--home-...)에 모아 두었다. 색을 바꾸고 싶으면 여기만 고친다.
+   ========================================================= */
+
 .home {
+  --home-accent: #e87a00; /* 귤 주황 : 사이트 강조색 */
+  --home-accent-dark: #b85f00; /* 주황 글씨 (흰 바탕에서 읽기 좋게 조금 진하게) */
+  --home-accent-soft: #fff3e6; /* 연한 주황 바탕 */
+  --home-hero-bg: #fff6ec; /* 히어로 바탕 */
+  --home-ink: #1f1a15; /* 본문 글씨 */
+  --home-muted: #6b625a; /* 보조 글씨 */
+  --home-line: #ece5dc; /* 테두리 */
+  --home-card: #ffffff; /* 카드 바탕 */
+  --home-track: #f1ece6; /* 막대 바탕 */
+
+  /* [넓게 쓰기] 바깥 .container 가 좁아도 홈 화면만 최대 1200px 까지 넓힌다
+     width  : 화면 너비 - 양옆 여백 48px, 단 1200px 보다 넓어지지 않게
+     margin : 부모 가운데에서 내 너비의 절반만큼 왼쪽으로 → 화면 가운데 정렬 */
+  width: min(1200px, calc(100vw - 48px));
+  margin-left: calc(50% - min(600px, calc(50vw - 24px)));
+
   display: grid;
-  gap: 20px;
+  gap: 32px;
+  padding-block: 8px 64px;
+  color: var(--home-ink);
+  font-size: 1rem;
+  line-height: 1.6;
 }
 
-/* 제목 + 날씨 버튼 : 넓으면 가로, 좁으면 세로로 쌓인다 */
-.home-head {
+/* ---------------------------------------------------------
+   ① 히어로
+   --------------------------------------------------------- */
+.home-hero {
   display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
+  flex-wrap: wrap; /* 좁아지면 날씨 상자가 아래로 내려간다 */
+  align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 28px 40px;
+  padding: 40px 44px;
+  background: var(--home-hero-bg);
+  border: 1px solid #f6e3cf;
+  border-radius: 24px;
 }
-.home-head h1 {
-  margin: 0 0 4px;
+.hero-text {
+  flex: 1 1 380px; /* 글 영역 : 최소 380px, 남는 공간은 글이 차지 */
+  min-width: 0;
 }
-.weather-switch {
+.hero-eyebrow {
+  margin: 0 0 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--home-accent-dark);
+  letter-spacing: 0.02em;
+}
+.home-hero h1 {
+  margin: 0 0 12px;
+  font-size: clamp(
+    1.9rem,
+    1.2rem + 2.4vw,
+    2.8rem
+  ); /* 화면 너비에 따라 28~45px */
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.hero-desc {
+  margin: 0;
+  font-size: 1.08rem;
+  color: var(--home-muted);
+  max-width: 34em;
+}
+
+/* 오른쪽 날씨 상자 */
+.hero-weather {
+  flex: 0 1 380px;
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+.wx-now {
+  display: grid;
+  gap: 2px;
+  padding: 18px 22px;
+  background: var(--home-card);
+  border-radius: 16px;
+  box-shadow:
+    0 1px 2px rgba(60, 35, 10, 0.06),
+    0 8px 24px rgba(60, 35, 10, 0.06);
+}
+.wx-label {
+  font-size: 0.9rem;
+  color: var(--home-muted);
+  font-weight: 600;
+}
+.wx-main {
   display: flex;
-  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 14px;
+}
+.wx-main strong {
+  font-size: 2.2rem;
+  line-height: 1.2;
+}
+.wx-temp {
+  font-size: 2.2rem;
+  font-weight: 300;
+  color: var(--home-accent-dark);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 날씨 버튼 4개 : 똑같은 너비로 한 줄 (손가락으로 누르기 좋게 높이 48px) */
+.wx-switch {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 6px;
+  padding: 5px;
+  background: rgba(232, 122, 0, 0.1);
+  border-radius: 14px;
 }
-
-/* 왼쪽 추천(넓게) + 오른쪽 히트맵·취향 → 900px 미만이면 한 줄 */
-.home-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-  gap: 20px;
-  align-items: start;
-}
-.home-side {
-  display: grid;
-  gap: 20px;
-  min-width: 0;
-}
-@media (max-width: 900px) {
-  .home-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
-/* 흰 상자 */
-.dash-panel {
-  background: #fff;
-  border: 1px solid #e5e7eb;
+.wx-btn {
+  min-height: 48px;
+  border: 0;
   border-radius: 10px;
-  padding: 20px;
-  min-width: 0;
+  background: transparent;
+  color: var(--home-ink);
+  font: inherit;
+  font-size: 1.02rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: grid;
+  place-content: center;
+  line-height: 1.2;
+  transition:
+    background 0.15s,
+    color 0.15s;
 }
-.dash-panel h2 {
-  font-size: 1.05rem;
-  margin: 0 0 4px;
+.wx-btn small {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--home-accent-dark);
+}
+.wx-btn:hover {
+  background: rgba(255, 255, 255, 0.7);
+}
+.wx-btn.is-active {
+  background: var(--home-accent);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(232, 122, 0, 0.35);
+}
+.wx-btn.is-active small {
+  color: #fff;
+}
+.wx-btn:focus-visible,
+.wx-reset:focus-visible,
+.home-login-btn:focus-visible {
+  outline: 3px solid var(--home-ink);
+  outline-offset: 2px;
+}
+.wx-reset {
+  justify-self: start;
+  border: 0;
+  background: none;
+  padding: 4px 2px;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--home-accent-dark);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* 안내·오류 문구 : 기존 alert 스타일 위에 여백만 맞춘다 */
+.home .alert-info,
+.home .alert-error {
+  margin: -12px 0 0;
+}
+
+/* ---------------------------------------------------------
+   공통 : 흰 상자 (추천 · 히트맵 · 취향)
+   --------------------------------------------------------- */
+.dash-panel {
+  background: var(--home-card);
+  border: 1px solid var(--home-line);
+  border-radius: 20px;
+  padding: 28px 32px;
+  min-width: 0;
+  box-shadow: 0 1px 2px rgba(60, 35, 10, 0.04);
 }
 .dash-head {
-  margin-bottom: 16px;
+  margin-bottom: 22px;
+}
+.dash-panel h2 {
+  margin: 0 0 6px;
+  font-size: 1.4rem;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+}
+.dash-panel .sub {
+  font-size: 0.98rem;
+  color: var(--home-muted);
+  margin: 0;
+}
+.home-loading {
+  color: var(--home-muted);
+  font-size: 1.05rem;
 }
 
-/* ---------- 추천 Top 3 ---------- */
+/* ---------------------------------------------------------
+   ② 추천 Top 3 : 카드 3장
+   --------------------------------------------------------- */
 .rec-list {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 18px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
 }
+.rec-item {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px;
+  background: #fffaf4;
+  border: 1px solid var(--home-line);
+  border-radius: 16px;
+  min-width: 0;
+}
+/* 1위 카드만 테두리를 주황으로 */
+.rec-item:first-child {
+  border-color: #f4c48f;
+  background: var(--home-accent-soft);
+}
+
+/* 순위 · 카테고리 · "평소보다 몇 배" 를 한 줄에, 비율(%)은 다음 줄에 크게
+   → flex-wrap + 비율에 flex-basis 100% 를 주면 비율만 줄바꿈된다 */
 .rec-top {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: 10px;
 }
 .rec-rank {
-  width: 24px;
-  height: 24px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
-  background: #e87a00;
+  background: var(--home-accent);
   color: #fff;
-  font-weight: 700;
-  font-size: 0.8rem;
+  font-weight: 800;
+  font-size: 1rem;
   display: grid;
   place-items: center;
+  flex-shrink: 0;
+}
+.rec-item:not(:first-child) .rec-rank {
+  background: var(--home-ink);
 }
 .rec-share {
+  order: 1; /* 같은 줄의 다른 것들보다 뒤로 */
+  flex-basis: 100%; /* 한 줄 전체 → 다음 줄로 내려간다 */
+  font-size: 2.6rem;
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
+  margin-top: 6px;
 }
 .rec-lift {
-  font-size: 0.78rem;
-  color: #a85600;
-  background: #fff3e6;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--home-accent-dark);
+  background: #fff;
+  border: 1px solid #f4c48f;
   border-radius: 999px;
-  padding: 2px 8px;
+  padding: 3px 10px;
 }
 
-/* 막대 : 회색 바탕(track) 위에 주황 채움(fill) */
+/* 막대 : 회색 바탕(track) 위에 주황 채움(fill), 세로 눈금 = 평소 비율 */
 .bar-track {
   position: relative;
-  height: 10px;
-  background: #f1f2f4;
-  border-radius: 5px;
+  height: 12px;
+  background: var(--home-track);
+  border-radius: 6px;
 }
 .bar-fill {
   height: 100%;
-  background: #e87a00;
-  border-radius: 5px;
+  background: var(--home-accent);
+  border-radius: 6px;
 }
-/* 평소 비율 위치 눈금 */
 .bar-mark {
   position: absolute;
-  top: -3px;
-  width: 2px;
-  height: 16px;
-  background: #4b5563;
+  top: -4px;
+  width: 3px;
+  height: 20px;
+  border-radius: 2px;
+  background: var(--home-ink);
 }
 .rec-caption {
-  font-size: 0.78rem;
-  color: #6b7280;
-  margin: 4px 0 0;
-}
-.rec-posts {
-  margin: 8px 0 0;
-  padding-left: 18px;
-  display: grid;
-  gap: 2px;
-  font-size: 0.9rem;
+  font-size: 0.92rem;
+  color: var(--home-muted);
+  margin: 0;
 }
 
-/* ---------- 히트맵 ---------- */
+/* 추천 글 목록 : 한 줄씩 칸을 나눠 누르기 쉽게 */
+.rec-posts {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+  display: grid;
+  border-top: 1px solid var(--home-line);
+}
+.rec-posts li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  padding: 12px 2px;
+  border-bottom: 1px solid var(--home-line);
+  font-size: 1rem;
+}
+.rec-posts li:last-child {
+  border-bottom: 0;
+}
+.rec-posts a {
+  color: var(--home-ink);
+  font-weight: 600;
+  text-decoration: none;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.rec-posts a:hover {
+  color: var(--home-accent-dark);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.rec-posts .sub {
+  flex-shrink: 0;
+  font-size: 0.86rem;
+  color: var(--home-muted);
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------
+   ③ 히트맵 + 내 취향 : 나란히 두 칸
+   --------------------------------------------------------- */
+.home-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: stretch; /* 두 상자의 높이를 맞춘다 */
+}
+
 .table-scroll {
   overflow-x: auto;
 }
 .heatmap {
   width: 100%;
   border-collapse: separate;
-  border-spacing: 3px;
+  border-spacing: 4px;
   table-layout: fixed; /* 칸 너비를 글자 길이와 상관없이 똑같이 */
-  min-width: 420px; /* 이보다 좁으면 table-scroll 안에서 가로 스크롤 */
-  font-size: 0.85rem;
+  min-width: 480px; /* 이보다 좁으면 table-scroll 안에서 가로 스크롤 */
+  font-size: 0.98rem;
   font-variant-numeric: tabular-nums;
 }
 .heatmap thead th:first-child {
-  width: 26%; /* 날씨 이름 + 건수 칸만 넓게 */
+  width: 24%; /* 날씨 이름 + 건수 칸만 넓게 */
 }
 .heatmap thead th {
   text-align: center;
+  font-size: 0.9rem;
+  color: var(--home-muted);
 }
 .heatmap thead th:first-child,
 .heatmap tbody th {
   text-align: left;
 }
 .heatmap th {
-  font-weight: 600;
+  font-weight: 700;
   white-space: nowrap;
-  padding: 4px 6px;
+  padding: 6px 8px;
+}
+.heatmap tbody th .sub {
+  display: block; /* 건수는 날씨 이름 아래 줄에 작게 */
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--home-muted);
 }
 .heatmap td {
   text-align: center;
-  padding: 8px 4px;
-  border-radius: 4px;
+  padding: 14px 4px;
+  border-radius: 8px;
   /* --heat (0~1) 이 클수록 진한 주황 : rgba 의 마지막 값이 투명도 */
   background: rgba(232, 122, 0, calc(0.08 + var(--heat) * 0.82));
-  color: #1f2937;
+  color: var(--home-ink);
 }
-/* 진한 칸은 글자를 흰색으로 */
+/* 각 행에서 가장 큰 칸은 흰 글씨로 강조 */
 .heatmap td.is-max {
   color: #fff;
-  font-weight: 700;
+  font-weight: 800;
 }
 /* 지금 보고 있는 날씨 행 강조 */
 .heatmap tr.is-selected th {
-  color: #e87a00;
+  color: var(--home-accent-dark);
 }
 .heatmap tr.is-selected td {
-  outline: 2px solid #e87a00;
-  outline-offset: -2px;
+  box-shadow: inset 0 0 0 2px var(--home-ink);
+}
+
+/* 로그인 안 한 사람용 안내 상자 */
+.home-login {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 14px;
+}
+.home-login .sub {
+  font-size: 1.05rem;
+}
+.home-login-btn {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 22px;
+  border-radius: 12px;
+  background: var(--home-accent);
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+}
+.home-login-btn:hover {
+  filter: brightness(1.05);
+}
+
+/* ---------------------------------------------------------
+   화면 너비별 조정
+   --------------------------------------------------------- */
+/* 1024px 미만 : 히트맵·취향을 위아래로 */
+@media (max-width: 1023px) {
+  .home-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+/* 900px 미만 : 추천 카드를 세로로 한 장씩 */
+@media (max-width: 899px) {
+  .rec-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .home-hero {
+    padding: 32px 28px;
+  }
+  .hero-weather {
+    flex-basis: 100%;
+  }
+}
+/* 560px 미만 (휴대폰) : 여백을 줄이고 글씨를 조금 작게 */
+@media (max-width: 559px) {
+  .home {
+    width: min(1200px, calc(100vw - 32px));
+    margin-left: calc(50% - min(600px, calc(50vw - 16px)));
+    gap: 24px;
+  }
+  .home-hero {
+    padding: 26px 20px;
+    border-radius: 20px;
+  }
+  .dash-panel {
+    padding: 22px 18px;
+    border-radius: 16px;
+  }
+  .dash-panel h2 {
+    font-size: 1.22rem;
+  }
+  .rec-item {
+    padding: 20px 18px;
+  }
+  .rec-share {
+    font-size: 2.2rem;
+  }
+  .wx-main strong,
+  .wx-temp {
+    font-size: 1.9rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wx-btn {
+    transition: none;
+  }
 }

@@ -2,12 +2,8 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { fetchWeather } from "../api/weatherApi"; // 06챕터에서 만든 날씨 API
-import {
-  fetchHeatmap,
-  fetchPreference,
-  fetchRecommend,
-} from "../api/pandasApi"; // [Chapter 09] Python 분석 서버
-import { WEATHERS } from "../constants/weathers";
+import { fetchHeatmap, fetchPreference, fetchRecommend } from "../api/pandasApi"; // [Chapter 09] Python 분석 서버
+import { WEATHERS, getWeatherLabel } from "../constants/weathers";
 import RecommendCard from "../components/RecommendCard";
 import WeatherHeatmap from "../components/WeatherHeatmap";
 import MyTasteChart from "../components/MyTasteChart";
@@ -16,8 +12,7 @@ import MyTasteChart from "../components/MyTasteChart";
 const DEFAULT_CONDITION = { weather: "CLEAR", temp: 18 };
 
 // 분석 서버가 꺼져 있을 때 보여줄 문구
-const ANALYSIS_ERROR =
-  "분석 서버에 연결하지 못했습니다. 8000번 포트의 FastAPI 가 실행 중인지 확인하세요.";
+const ANALYSIS_ERROR = "분석 서버에 연결하지 못했습니다. 8000번 포트의 FastAPI 가 실행 중인지 확인하세요.";
 
 /**
  * 06챕터 날씨 응답 → 분석 서버에 보낼 { weather, temp } 로 바꾼다
@@ -87,10 +82,7 @@ function HomePage() {
 
   // 날씨 버튼 : 다른 날씨로 미리보기 (기온은 그대로)
   const handlePreview = (code) => {
-    setCondition({
-      weather: code,
-      temp: condition?.temp ?? DEFAULT_CONDITION.temp,
-    });
+    setCondition({ weather: code, temp: condition?.temp ?? DEFAULT_CONDITION.temp });
   };
 
   // 오늘 날씨로 되돌리기
@@ -98,75 +90,88 @@ function HomePage() {
 
   const isPreview = today && condition && condition.weather !== today.weather;
 
+  // 큰 날씨 카드 위의 작은 글씨 : 지금 보고 있는 조건이 무엇인지 알려 준다
+  const conditionLabel = isPreview ? "미리보기 중" : today ? "오늘 서울" : "기본 조건";
+
   // ----------------------- 화면 -----------------------
   return (
     <section className="home">
-      <div className="home-head">
-        <div>
+      {/* ① 첫 화면 : 인사말 + 지금 날씨 (크게) + 날씨 버튼 */}
+      <header className="home-hero">
+        <div className="hero-text">
+          <p className="hero-eyebrow">{member ? `${member.name}님을 위한 오늘의 추천` : "오늘의 추천"}</p>
           <h1>오늘은 이런 글 어때요?</h1>
-          <p className="sub">
-            지난 60일 조회 기록을 pandas 로 분석해서 날씨에 맞는 글을
-            골랐습니다.
+          <p className="hero-desc">
+            지난 60일 조회 기록을 pandas 로 분석해서 날씨에 맞는 글을 골랐습니다.
           </p>
         </div>
 
-        {/* 날씨 미리보기 버튼 */}
-        <div className="weather-switch" role="group" aria-label="날씨 미리보기">
-          {WEATHERS.map((w) => (
-            <button
-              key={w.code}
-              type="button"
-              className={condition?.weather === w.code ? "tab active" : "tab"}
-              onClick={() => handlePreview(w.code)}
-            >
-              {w.label}
-              {today?.weather === w.code && <small> (오늘)</small>}
-            </button>
-          ))}
+        <div className="hero-weather">
+          {condition && (
+            <div className="wx-now">
+              <span className="wx-label">{conditionLabel}</span>
+              <span className="wx-main">
+                <strong>{getWeatherLabel(condition.weather)}</strong>
+                <span className="wx-temp">{condition.temp}°C</span>
+              </span>
+            </div>
+          )}
+
+          {/* 날씨 미리보기 버튼 (누르면 그 날씨 기준으로 추천이 바뀐다) */}
+          <div className="wx-switch" role="group" aria-label="날씨 미리보기">
+            {WEATHERS.map((w) => (
+              <button
+                key={w.code}
+                type="button"
+                className={condition?.weather === w.code ? "wx-btn is-active" : "wx-btn"}
+                aria-pressed={condition?.weather === w.code}
+                onClick={() => handlePreview(w.code)}
+              >
+                {w.label}
+                {today?.weather === w.code && <small>오늘</small>}
+              </button>
+            ))}
+          </div>
+
           {isPreview && (
-            <button
-              type="button"
-              className="btn btn-light"
-              onClick={handleToday}
-            >
-              오늘 날씨로
+            <button type="button" className="wx-reset" onClick={handleToday}>
+              ← 오늘 날씨로 돌아가기
             </button>
           )}
         </div>
-      </div>
+      </header>
 
       {!today && condition && (
         <p className="alert-info">
-          오늘 날씨를 불러오지 못해 맑음 18°C 기준으로 보여줍니다. 위 버튼으로
-          날씨를 바꿔 보세요.
+          오늘 날씨를 불러오지 못해 맑음 18°C 기준으로 보여줍니다. 위 버튼으로 날씨를 바꿔 보세요.
         </p>
       )}
       {error && <p className="alert-error">{error}</p>}
 
-      <div className="home-grid">
+      {/* ② 오늘 추천 Top 3 : 화면 너비 전체를 쓰는 큰 카드 3장 */}
+      <div className="home-section">
         {recommend ? (
           <RecommendCard data={recommend} />
         ) : (
-          !error && <p className="sub">추천 계산 중...</p>
+          !error && <div className="dash-panel home-loading">추천을 계산하고 있어요…</div>
         )}
+      </div>
 
-        <div className="home-side">
-          {heatmap && (
-            <WeatherHeatmap data={heatmap} selected={condition?.weather} />
-          )}
+      {/* ③ 분석 두 개 : 넓은 화면에서는 나란히, 좁으면 위아래로 */}
+      <div className="home-grid">
+        {heatmap && <WeatherHeatmap data={heatmap} selected={condition?.weather} />}
 
-          {member ? (
-            preference && <MyTasteChart data={preference} name={member.name} />
-          ) : (
-            <div className="dash-panel">
-              <h2>내 취향 분석</h2>
-              <p className="sub">
-                <Link to="/login">로그인</Link>하면 내가 많이 본 카테고리를
-                평균과 비교해 볼 수 있어요.
-              </p>
-            </div>
-          )}
-        </div>
+        {member ? (
+          preference && <MyTasteChart data={preference} name={member.name} />
+        ) : (
+          <div className="dash-panel home-login">
+            <h2>내 취향 분석</h2>
+            <p className="sub">로그인하면 내가 많이 본 카테고리를 전체 평균과 비교해 볼 수 있어요.</p>
+            <Link to="/login" className="home-login-btn">
+              로그인하고 내 취향 보기
+            </Link>
+          </div>
+        )}
       </div>
     </section>
   );
